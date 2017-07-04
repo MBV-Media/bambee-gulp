@@ -1,12 +1,12 @@
 {
   "name": "bambee-gulp",
-  "version": "1.0.0",
-  "description": "Abstract class representing the Gruntfile. Provides methods to customize Grunt tasks.",
+  "version": "1.0.1",
+  "description": "Abstract class representing the Gulpfile. Provides methods to customize Gulp tasks.",
   "author": "MBV-Media <info@mbv-media.com>",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/MBV-Media/Bambee-WordPress-Theme"
+    "url": "https://github.com/MBV-Media/bambee-gulp"
   },
   "dependencies": {
     "del": "^2.2.2",
