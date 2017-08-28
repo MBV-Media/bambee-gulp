@@ -18,6 +18,8 @@ var BambeeGulp = (function() {
 
   var self,
     args,
+    fs,
+    path,
     jsonFile,
 
     gulp,
@@ -49,6 +51,8 @@ var BambeeGulp = (function() {
 
     gulp = _gulp;
 
+    fs = require('fs');
+    path = require('path');
     jsonFile = require('jsonfile');
     plugins = require('gulp-load-plugins')();
     merge = require('merge-stream');
@@ -411,16 +415,34 @@ var BambeeGulp = (function() {
    * @returns {*}
    */
   BambeeGulp.prototype.taskUglifyJsVendor = function() {
-    var src = self.getSrcFromJson('src/js/vendor.js.json');
-    return gulp.src(src)
-      .pipe(plugins.if(args.dev, plugins.sourcemaps.init(sourcemapsConfig)))
-      .pipe(plugins.uglify()
-        .on('error', plugins.util.log))
-      .pipe(plugins.concat('vendor.min.js'))
-      .pipe(plugins.if(args.dev, plugins.sourcemaps.write('./')))
-      .pipe(gulp.dest(paths.dist.js))
-      .pipe(plugins.notify(notifyConfig))
-      .pipe(plugins.livereload());
+    var files = fs.readdirSync('src/js');
+
+    var output = null;
+
+    files.forEach(function (element) {
+      if(element.match(/vendor[a-zA-z0-9_-]*\.js\.json/)) {
+
+        var src = self.getSrcFromJson('src/js/' + element);
+        var stream = gulp.src(src)
+          .pipe(plugins.if(args.dev, plugins.sourcemaps.init(sourcemapsConfig)))
+          .pipe(plugins.uglify()
+            .on('error', plugins.util.log))
+          .pipe(plugins.concat(element.replace('.json', '')))
+          .pipe(plugins.if(args.dev, plugins.sourcemaps.write('./')))
+          .pipe(gulp.dest(paths.dist.js))
+          .pipe(plugins.notify(notifyConfig))
+          .pipe(plugins.livereload());
+
+        if(output === null) {
+          output = stream;
+        }
+        else {
+          output = merge(output, stream);
+        }
+      }
+    });
+
+    return output;
   };
 
   /**
