@@ -427,7 +427,7 @@ var BambeeGulp = (function() {
           .pipe(plugins.if(args.dev, plugins.sourcemaps.init(sourcemapsConfig)))
           .pipe(plugins.uglify()
             .on('error', plugins.util.log))
-          .pipe(plugins.concat(element.replace('.json', '')))
+          .pipe(plugins.concat(element.replace('.js.json', '.min.js')))
           .pipe(plugins.if(args.dev, plugins.sourcemaps.write('./')))
           .pipe(gulp.dest(paths.dist.js))
           .pipe(plugins.notify(notifyConfig))
