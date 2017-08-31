@@ -305,26 +305,10 @@ var BambeeGulp = (function() {
    */
   BambeeGulp.prototype.taskLintScssMain = function() {
 
-    // Stylelint config rules
-    var stylelintConfig,
-      stylelintCustomConfig;
-
-    try {
-      stylelintCustomConfig = jsonFile.readFileSync('config/lintScss.json');
-    }
-    catch(error) {
-      stylelintCustomConfig = {};
-    };
-
-    if(stylelintCustomConfig.rules) {
-      stylelintConfig = stylelintCustomConfig;
-    }
-    else {
-      stylelintConfig = jsonFile.readFileSync('node_modules/bambee-gulp/config/lintScss.json');
-    }
+    var config = self.loadConfig('node_modules/bambee-gulp/config/lintScss.json', 'config/lintScss.json');
 
     var processors = [
-      stylelint(stylelintConfig),
+      stylelint(config),
       postcssReporter({
         clearMessages: true,
         throwError: false,
@@ -345,8 +329,11 @@ var BambeeGulp = (function() {
    * @returns {*}
    */
   BambeeGulp.prototype.taskLintCoffeeMain = function() {
+
+    var config = self.loadConfig('node_modules/bambee-gulp/config/lintCoffee.json', 'config/lintCoffee.json');
+
     return gulp.src(paths.src.coffee.main)
-      .pipe(plugins.coffeelint('./node_modules/bambee-gulp/config/lintCoffee.json'))
+      .pipe(plugins.coffeelint(config))
       .pipe(plugins.coffeelint.reporter('default'));
     //.pipe(_plugins.coffeelint.reporter('coffeelint-stylish'));
   };
@@ -587,6 +574,34 @@ var BambeeGulp = (function() {
   BambeeGulp.prototype.cloneObject = function(object) {
     return JSON.parse(JSON.stringify(object));
   };
+
+  /**
+   *
+   * @param defaultConfigFile
+   * @param customConfigFile
+   * @returns {*}
+   */
+  BambeeGulp.prototype.loadConfig = function(defaultConfigFile, customConfigFile) {
+
+    var config,
+      customConfig;
+
+    try {
+      customConfig = jsonFile.readFileSync(customConfigFile);
+    }
+    catch(error) {
+      customConfig = {};
+    };
+
+    if(Object.keys(customConfig).length) {
+      config = customConfig;
+    }
+    else {
+      config = jsonFile.readFileSync(defaultConfigFile);
+    }
+
+    return config;
+  }
 
   return BambeeGulp;
 })();
