@@ -306,10 +306,22 @@ var BambeeGulp = (function() {
   BambeeGulp.prototype.taskLintScssMain = function() {
 
     // Stylelint config rules
-    var stylelintConfig = jsonFile.readFileSync('node_modules/bambee-gulp/config/lintScss.json'),
-        stylelintCustomConfig = jsonFile.readFileSync('config/lintScss.json');
+    var stylelintConfig,
+      stylelintCustomConfig;
 
-    console.log(stylelintCustomConfig);
+    try {
+      stylelintCustomConfig = jsonFile.readFileSync('config/lintScss.json');
+    }
+    catch(error) {
+      stylelintCustomConfig = {};
+    };
+
+    if(stylelintCustomConfig.rules) {
+      stylelintConfig = stylelintCustomConfig;
+    }
+    else {
+      stylelintConfig = jsonFile.readFileSync('node_modules/bambee-gulp/config/lintScss.json');
+    }
 
     var processors = [
       stylelint(stylelintConfig),
