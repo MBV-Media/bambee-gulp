@@ -246,7 +246,8 @@ var BambeeGulp = (function() {
    */
   BambeeGulp.prototype.taskCleanJsVendor = function() {
     return self.taskClean([
-      paths.dist.js + '/vendor*.js'
+      paths.dist.js + '/vendor*.js',
+      paths.dist.js + '/vendor*.js.map'
     ]);
   };
 
