@@ -306,7 +306,10 @@ var BambeeGulp = (function() {
   BambeeGulp.prototype.taskLintScssMain = function() {
 
     // Stylelint config rules
-    var stylelintConfig = jsonFile.readFileSync('node_modules/bambee-gulp/config/lintScss.json');
+    var stylelintConfig = jsonFile.readFileSync('node_modules/bambee-gulp/config/lintScss.json'),
+        stylelintCustomConfig = jsonFile.readFileSync('config/lintScss.json');
+
+    console.log(stylelintCustomConfig);
 
     var processors = [
       stylelint(stylelintConfig),
