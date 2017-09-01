@@ -92,7 +92,13 @@ var BambeeGulp = (function() {
         },
         coffee: {
           main: [
-            src + '/js/**/*.{js,coffee}',
+            src + '/js/**/*.coffee',
+            '!' + src + '/js/vendor/**/*'
+          ]
+        },
+        js: {
+          main: [
+            src + '/js/**/*.js',
             '!' + src + '/js/vendor/**/*'
           ]
         },
