@@ -518,6 +518,7 @@ var BambeeGulp = (function() {
     watcher.push(gulp.watch(paths.src.scss.main, ['watch:compile:scss:main']));
     watcher.push(gulp.watch(paths.src.scss.admin, ['watch:compile:scss:admin']));
     watcher.push(gulp.watch(paths.src.coffee.main, ['compile:coffee:main']));
+    watcher.push(gulp.watch(paths.src.js.main, ['compile:coffee:main']));
     watcher.push(gulp.watch('src/js/vendor*.js.json', ['uglify:js:vendor']));
     watcher.push(gulp.watch(paths.src.images, ['watch:images']));
     watcher.push(gulp.watch(paths.src.copy, ['copy', 'reload']));
