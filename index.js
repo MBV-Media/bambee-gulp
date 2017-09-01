@@ -406,11 +406,17 @@ var BambeeGulp = (function() {
    * @returns {*}
    */
   BambeeGulp.prototype.taskCompileCoffeeMain = function() {
-    return gulp.src(paths.src.coffee.main)
+    var coffeeStream = gulp.src(paths.src.coffee.main)
       .pipe(plugins.plumber(self.errorSilent))
       .pipe(plugins.if(args.dev, plugins.sourcemaps.init(sourcemapsConfig)))
-      .pipe(plugins.coffee())
-      .pipe(plugins.jshint())
+      .pipe(plugins.coffee());
+
+    var jsStream = gulp.src(paths.src.js.main)
+      .pipe(plugins.plumber(self.errorSilent))
+      .pipe(plugins.if(args.dev, plugins.sourcemaps.init(sourcemapsConfig)))
+      .pipe(plugins.jshint());
+
+    return merge(coffeeStream, jsStream)
       .pipe(plugins.uglify())
       .pipe(plugins.concat('main.min.js'))
       .pipe(plugins.if(args.dev, plugins.sourcemaps.write('./')))
