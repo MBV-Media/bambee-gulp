@@ -165,8 +165,6 @@ var BambeeGulp = (function() {
       'copy'
     ];
 
-    var watchTaskDependencies = defaultTaskDependencies;
-
     if(args.watch) {
       defaultTaskDependencies.push('watch');
     }
@@ -604,7 +602,7 @@ var BambeeGulp = (function() {
     }
     catch(error) {
       customConfig = {};
-    };
+    }
 
     if(Object.keys(customConfig).length) {
       config = customConfig;
@@ -614,7 +612,7 @@ var BambeeGulp = (function() {
     }
 
     return config;
-  }
+  };
 
   return BambeeGulp;
 })();
