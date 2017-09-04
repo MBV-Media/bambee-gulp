@@ -92,7 +92,13 @@ var BambeeGulp = (function() {
         },
         coffee: {
           main: [
-            src + '/js/**/*.{js,coffee}',
+            src + '/js/**/*.coffee',
+            '!' + src + '/js/vendor/**/*'
+          ]
+        },
+        js: {
+          main: [
+            src + '/js/**/*.js',
             '!' + src + '/js/vendor/**/*'
           ]
         },
@@ -158,8 +164,6 @@ var BambeeGulp = (function() {
       'images',
       'copy'
     ];
-
-    var watchTaskDependencies = defaultTaskDependencies;
 
     if(args.watch) {
       defaultTaskDependencies.push('watch');
@@ -305,11 +309,10 @@ var BambeeGulp = (function() {
    */
   BambeeGulp.prototype.taskLintScssMain = function() {
 
-    // Stylelint config rules
-    var stylelintConfig = jsonFile.readFileSync('node_modules/bambee-gulp/config/lintScss.json');
+    var config = self.loadConfig('node_modules/bambee-gulp/config/lintScss.json', 'config/lintScss.json');
 
     var processors = [
-      stylelint(stylelintConfig),
+      stylelint(config),
       postcssReporter({
         clearMessages: true,
         throwError: false,
@@ -330,8 +333,11 @@ var BambeeGulp = (function() {
    * @returns {*}
    */
   BambeeGulp.prototype.taskLintCoffeeMain = function() {
+
+    var config = self.loadConfig('node_modules/bambee-gulp/config/lintCoffee.json', 'config/lintCoffee.json');
+
     return gulp.src(paths.src.coffee.main)
-      .pipe(plugins.coffeelint('./node_modules/bambee-gulp/config/lintCoffee.json'))
+      .pipe(plugins.coffeelint(config))
       .pipe(plugins.coffeelint.reporter('default'));
     //.pipe(_plugins.coffeelint.reporter('coffeelint-stylish'));
   };
@@ -398,11 +404,17 @@ var BambeeGulp = (function() {
    * @returns {*}
    */
   BambeeGulp.prototype.taskCompileCoffeeMain = function() {
-    return gulp.src(paths.src.coffee.main)
+    var coffeeStream = gulp.src(paths.src.coffee.main)
       .pipe(plugins.plumber(self.errorSilent))
       .pipe(plugins.if(args.dev, plugins.sourcemaps.init(sourcemapsConfig)))
-      .pipe(plugins.coffee())
-      .pipe(plugins.jshint())
+      .pipe(plugins.coffee());
+
+    var jsStream = gulp.src(paths.src.js.main)
+      .pipe(plugins.plumber(self.errorSilent))
+      .pipe(plugins.if(args.dev, plugins.sourcemaps.init(sourcemapsConfig)))
+      .pipe(plugins.jshint());
+
+    return merge(coffeeStream, jsStream)
       .pipe(plugins.uglify())
       .pipe(plugins.concat('main.min.js'))
       .pipe(plugins.if(args.dev, plugins.sourcemaps.write('./')))
@@ -504,6 +516,7 @@ var BambeeGulp = (function() {
     watcher.push(gulp.watch(paths.src.scss.main, ['watch:compile:scss:main']));
     watcher.push(gulp.watch(paths.src.scss.admin, ['watch:compile:scss:admin']));
     watcher.push(gulp.watch(paths.src.coffee.main, ['compile:coffee:main']));
+    watcher.push(gulp.watch(paths.src.js.main, ['compile:coffee:main']));
     watcher.push(gulp.watch('src/js/vendor*.js.json', ['uglify:js:vendor']));
     watcher.push(gulp.watch(paths.src.images, ['watch:images']));
     watcher.push(gulp.watch(paths.src.copy, ['copy', 'reload']));
@@ -571,6 +584,34 @@ var BambeeGulp = (function() {
    */
   BambeeGulp.prototype.cloneObject = function(object) {
     return JSON.parse(JSON.stringify(object));
+  };
+
+  /**
+   *
+   * @param defaultConfigFile
+   * @param customConfigFile
+   * @returns {*}
+   */
+  BambeeGulp.prototype.loadConfig = function(defaultConfigFile, customConfigFile) {
+
+    var config,
+      customConfig;
+
+    try {
+      customConfig = jsonFile.readFileSync(customConfigFile);
+    }
+    catch(error) {
+      customConfig = {};
+    }
+
+    if(Object.keys(customConfig).length) {
+      config = customConfig;
+    }
+    else {
+      config = jsonFile.readFileSync(defaultConfigFile);
+    }
+
+    return config;
   };
 
   return BambeeGulp;
