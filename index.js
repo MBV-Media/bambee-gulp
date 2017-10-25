@@ -391,7 +391,7 @@ var BambeeGulp = (function() {
         .on('error', plugins.sass.logError))
       .pipe(plugins.autoprefixer(autoprefixerConfig))
       .pipe(plugins.concat(outFileName))
-      .pipe(plugins.if(args.dev, plugins.sourcemaps.write('./')))
+      .pipe(plugins.if(args.dev, plugins.sourcemaps.write()))
       .pipe(gulp.dest(paths.dist.css))
       .pipe(plugins.notify(notifyConfig))
       .pipe(plugins.livereload());
@@ -417,7 +417,7 @@ var BambeeGulp = (function() {
     return merge(coffeeStream, jsStream)
       .pipe(plugins.uglify())
       .pipe(plugins.concat('main.min.js'))
-      .pipe(plugins.if(args.dev, plugins.sourcemaps.write('./')))
+      .pipe(plugins.if(args.dev, plugins.sourcemaps.write()))
       .pipe(gulp.dest(paths.dist.js))
       .pipe(plugins.notify(notifyConfig))
       .pipe(plugins.livereload());
@@ -441,7 +441,7 @@ var BambeeGulp = (function() {
           .pipe(plugins.uglify()
             .on('error', plugins.util.log))
           .pipe(plugins.concat(element.replace('.js.json', '.min.js')))
-          .pipe(plugins.if(args.dev, plugins.sourcemaps.write('./')))
+          .pipe(plugins.if(args.dev, plugins.sourcemaps.write()))
           .pipe(gulp.dest(paths.dist.js))
           .pipe(plugins.notify(notifyConfig))
           .pipe(plugins.livereload());
