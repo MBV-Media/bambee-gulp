@@ -146,7 +146,8 @@ var BambeeGulp = (function() {
 
     notifyConfig = {
       title: 'Created',
-      message: '<%= file.path %>'
+      message: '<%= file.path %>',
+      notifier: function (options, callback) { callback(); }
     };
   }
 
