@@ -9,9 +9,12 @@
     "url": "https://github.com/MBV-Media/bambee-gulp"
   },
   "dependencies": {
+    "babel-core": "^6.26.3",
+    "babel-preset-es2015": "^6.24.1",
     "del": "^3.0.0",
     "fs": "0.0.1-security",
     "gulp-autoprefixer": "^4.1.0",
+    "gulp-babel": "^7.0.1",
     "gulp-coffee": "^2.3.5",
     "gulp-coffeelint": "^0.6.0",
     "gulp-concat": "^2.6.1",
