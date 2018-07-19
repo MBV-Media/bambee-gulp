@@ -411,7 +411,7 @@ var BambeeGulp = (function() {
       .pipe(plugins.coffee());
 
     var jsStream = gulp.src(paths.src.js.main)
-      .pipe(plugins.plumber(self.errorSilent))
+      .pipe(plugins.babel())
       .pipe(plugins.if(args.dev, plugins.sourcemaps.init(sourcemapsConfig)))
       .pipe(plugins.jshint());
 
