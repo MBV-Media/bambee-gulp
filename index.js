@@ -160,7 +160,7 @@ var BambeeGulp = (function() {
       'compile:scss:admin',
       'compile:scss:main',
       'compile:scss:style',
-      'compile:coffee:main',
+      'compile:js:main',
       'uglify:js:vendor',
       'images',
       'copy'
@@ -187,7 +187,7 @@ var BambeeGulp = (function() {
     gulp.task('compile:scss:admin', ['clean:css:admin'/*, 'lint:scss:main'*/], self.taskCompileScssAdmin);
     gulp.task('compile:scss:main', ['clean:css:main', 'lint:scss:main', 'sprites'], self.taskCompileScssMain);
     gulp.task('compile:scss:style', ['clean:css:style'], self.taskCompileScssStyle);
-    gulp.task('compile:coffee:main', ['clean:js:main', 'lint:coffee:main'], self.taskCompileCoffeeMain);
+    gulp.task('compile:js:main', ['clean:js:main', 'lint:coffee:main'], self.taskCompileJsMain);
     gulp.task('uglify:js:vendor', ['clean:js:vendor'], self.taskUglifyJsVendor);
     gulp.task('copy', ['clean:copy'], self.taskCopy);
 
@@ -196,7 +196,7 @@ var BambeeGulp = (function() {
     gulp.task('watch:images', ['clean:images'], self.taskImages);
     gulp.task('watch', [
       'compile:scss:main',
-      'compile:coffee:main',
+      'compile:js:main',
       'uglify:js:vendor',
       'images',
       'copy'
@@ -404,7 +404,7 @@ var BambeeGulp = (function() {
    *
    * @returns {*}
    */
-  BambeeGulp.prototype.taskCompileCoffeeMain = function() {
+  BambeeGulp.prototype.taskCompileJsMain = function() {
     var coffeeStream = gulp.src(paths.src.coffee.main)
       .pipe(plugins.plumber(self.errorSilent))
       .pipe(plugins.if(args.dev, plugins.sourcemaps.init(sourcemapsConfig)))
@@ -415,7 +415,7 @@ var BambeeGulp = (function() {
       .pipe(plugins.if(args.dev, plugins.sourcemaps.init(sourcemapsConfig)))
       .pipe(plugins.jshint());
 
-    return merge(coffeeStream, jsStream)
+    return merge(jsStream, coffeeStream)
       .pipe(plugins.uglify())
       .pipe(plugins.concat('main.min.js'))
       .pipe(plugins.if(args.dev, plugins.sourcemaps.write()))
@@ -516,8 +516,8 @@ var BambeeGulp = (function() {
 
     watcher.push(gulp.watch(paths.src.scss.main, ['watch:compile:scss:main']));
     watcher.push(gulp.watch(paths.src.scss.admin, ['watch:compile:scss:admin']));
-    watcher.push(gulp.watch(paths.src.coffee.main, ['compile:coffee:main']));
-    watcher.push(gulp.watch(paths.src.js.main, ['compile:coffee:main']));
+    watcher.push(gulp.watch(paths.src.coffee.main, ['compile:js:main']));
+    watcher.push(gulp.watch(paths.src.js.main, ['compile:js:main']));
     watcher.push(gulp.watch('src/js/vendor*.js.json', ['uglify:js:vendor']));
     watcher.push(gulp.watch(paths.src.images, ['watch:images']));
     watcher.push(gulp.watch(paths.src.copy, ['copy', 'reload']));
