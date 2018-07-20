@@ -181,13 +181,14 @@ var BambeeGulp = (function() {
     gulp.task('clean:js:vendor', self.taskCleanJsVendor);
     gulp.task('clean:copy', self.taskCleanCopy);
     gulp.task('lint:scss:main', self.taskLintScssMain);
+    gulp.task('lint:js:main', self.taskLintJsMain);
     gulp.task('lint:coffee:main', self.taskLintCoffeeMain);
     gulp.task('sprites', ['clean:sprites'], self.taskSprites);
     gulp.task('images', ['clean:images', 'sprites'], self.taskImages);
     gulp.task('build:css:admin', ['clean:css:admin'/*, 'lint:scss:main'*/], self.taskBuildCssAdmin);
     gulp.task('build:css:main', ['clean:css:main', 'lint:scss:main', 'sprites'], self.taskBuildssMain);
     gulp.task('build:css:style', ['clean:css:style'], self.taskBuildCssStyle);
-    gulp.task('build:js:main', ['clean:js:main', 'lint:coffee:main'], self.taskBuildJsMain);
+    gulp.task('build:js:main', ['clean:js:main', 'lint:js:main', 'lint:coffee:main'], self.taskBuildJsMain);
     gulp.task('build:js:vendor', ['clean:js:vendor'], self.taskBuildJsVendor);
     gulp.task('copy', ['clean:copy'], self.taskCopy);
 
@@ -327,6 +328,18 @@ var BambeeGulp = (function() {
 
     return gulp.src(path)
       .pipe(plugins.postcss(processors, {syntax: postcssScss}));
+  };
+
+  /**
+   *
+   */
+  BambeeGulp.prototype.taskLintJsMain = function () {
+
+    return gulp.src(paths.src.js.main)
+      .pipe(plugins.eslint())
+      .pipe(plugins.eslint.format())
+      .pipe(plugins.eslint.failAfterError());
+
   };
 
   /**
