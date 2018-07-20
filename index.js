@@ -335,8 +335,17 @@ var BambeeGulp = (function() {
    */
   BambeeGulp.prototype.taskLintJsMain = function () {
 
+    var config = {
+      parser: 'babel-eslint',
+      parserOptions: {
+        ecmaVersion: 6
+      },
+      extends: "eslint:recommended",
+      rules: self.loadConfig('node_modules/bambee-gulp/config/lintJs.json', 'config/lintJs.json')
+    };
+
     return gulp.src(paths.src.js.main)
-      .pipe(plugins.eslint())
+      .pipe(plugins.eslint(config))
       .pipe(plugins.eslint.format())
       .pipe(plugins.eslint.failAfterError());
 
