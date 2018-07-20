@@ -410,8 +410,17 @@ var BambeeGulp = (function() {
       .pipe(plugins.if(args.dev, plugins.sourcemaps.init(sourcemapsConfig)))
       .pipe(plugins.coffee());
 
+    var babelConfig = {
+      "presets": [
+        "env"
+      ],
+      "plugins": [
+        "transform-class-properties"
+      ]
+    };
+
     var jsStream = gulp.src(paths.src.js.main)
-      .pipe(plugins.babel())
+      .pipe(plugins.babel(babelConfig))
       .pipe(plugins.if(args.dev, plugins.sourcemaps.init(sourcemapsConfig)))
       .pipe(plugins.jshint());
 
