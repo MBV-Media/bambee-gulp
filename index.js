@@ -157,11 +157,11 @@ var BambeeGulp = (function() {
   BambeeGulp.prototype.registerTaks = function() {
 
     var defaultTaskDependencies = [
-      'compile:scss:admin',
-      'compile:scss:main',
-      'compile:scss:style',
-      'compile:js:main',
-      'uglify:js:vendor',
+      'build:css:admin',
+      'build:css:main',
+      'build:css:style',
+      'build:js:main',
+      'build:js:vendor',
       'images',
       'copy'
     ];
@@ -184,20 +184,20 @@ var BambeeGulp = (function() {
     gulp.task('lint:coffee:main', self.taskLintCoffeeMain);
     gulp.task('sprites', ['clean:sprites'], self.taskSprites);
     gulp.task('images', ['clean:images', 'sprites'], self.taskImages);
-    gulp.task('compile:scss:admin', ['clean:css:admin'/*, 'lint:scss:main'*/], self.taskCompileScssAdmin);
-    gulp.task('compile:scss:main', ['clean:css:main', 'lint:scss:main', 'sprites'], self.taskCompileScssMain);
-    gulp.task('compile:scss:style', ['clean:css:style'], self.taskCompileScssStyle);
-    gulp.task('compile:js:main', ['clean:js:main', 'lint:coffee:main'], self.taskCompileJsMain);
-    gulp.task('uglify:js:vendor', ['clean:js:vendor'], self.taskUglifyJsVendor);
+    gulp.task('build:css:admin', ['clean:css:admin'/*, 'lint:scss:main'*/], self.taskBuildCssAdmin);
+    gulp.task('build:css:main', ['clean:css:main', 'lint:scss:main', 'sprites'], self.taskBuildssMain);
+    gulp.task('build:css:style', ['clean:css:style'], self.taskBuildCssStyle);
+    gulp.task('build:js:main', ['clean:js:main', 'lint:coffee:main'], self.taskBuildJsMain);
+    gulp.task('build:js:vendor', ['clean:js:vendor'], self.taskBuildJsVendor);
     gulp.task('copy', ['clean:copy'], self.taskCopy);
 
-    gulp.task('watch:compile:scss:admin', ['clean:css:admin'/*, 'lint:scss:main'*/], self.taskCompileScssAdmin);
-    gulp.task('watch:compile:scss:main', ['clean:css:main', 'lint:scss:main'], self.taskCompileScssMain);
+    gulp.task('watch:build:css:admin', ['clean:css:admin'/*, 'lint:scss:main'*/], self.taskBuildCssAdmin);
+    gulp.task('watch:build:css:main', ['clean:css:main', 'lint:scss:main'], self.taskBuildssMain);
     gulp.task('watch:images', ['clean:images'], self.taskImages);
     gulp.task('watch', [
-      'compile:scss:main',
-      'compile:js:main',
-      'uglify:js:vendor',
+      'build:css:main',
+      'build:js:main',
+      'build:js:vendor',
       'images',
       'copy'
     ], self.taskWatch);
@@ -347,23 +347,23 @@ var BambeeGulp = (function() {
    *
    * @returns {*}
    */
-  BambeeGulp.prototype.taskCompileScssMain = function() {
-    return self.taskCompileScss(paths.src.scss.main, 'main.min.css');
+  BambeeGulp.prototype.taskBuildssMain = function() {
+    return self.taskBuildCss(paths.src.scss.main, 'main.min.css');
   };
 
   /**
    *
    * @returns {*}
    */
-  BambeeGulp.prototype.taskCompileScssAdmin = function() {
-    return self.taskCompileScss(paths.src.scss.admin, 'admin.min.css');
+  BambeeGulp.prototype.taskBuildCssAdmin = function() {
+    return self.taskBuildCss(paths.src.scss.admin, 'admin.min.css');
   };
 
   /**
    *
    * @returns {*}
    */
-  BambeeGulp.prototype.taskCompileScssStyle = function() {
+  BambeeGulp.prototype.taskBuildCssStyle = function() {
     return gulp.src('src/style.scss')
       .pipe(plugins.replace('#{pkg(name)}', pkg.name))
       .pipe(plugins.replace('#{pkg(description)}', pkg.description))
@@ -384,7 +384,7 @@ var BambeeGulp = (function() {
    * @param outFileName
    * @returns {*}
    */
-  BambeeGulp.prototype.taskCompileScss = function(src, outFileName) {
+  BambeeGulp.prototype.taskBuildCss = function(src, outFileName) {
     return gulp.src(src)
       .pipe(plugins.sassBulkImport())
       .pipe(plugins.if(args.dev, plugins.sourcemaps.init(sourcemapsConfig)))
@@ -404,7 +404,7 @@ var BambeeGulp = (function() {
    *
    * @returns {*}
    */
-  BambeeGulp.prototype.taskCompileJsMain = function() {
+  BambeeGulp.prototype.taskBuildJsMain = function() {
     var coffeeStream = gulp.src(paths.src.coffee.main)
       .pipe(plugins.plumber(self.errorSilent))
       .pipe(plugins.if(args.dev, plugins.sourcemaps.init(sourcemapsConfig)))
@@ -428,7 +428,7 @@ var BambeeGulp = (function() {
    *
    * @returns {*}
    */
-  BambeeGulp.prototype.taskUglifyJsVendor = function() {
+  BambeeGulp.prototype.taskBuildJsVendor = function() {
     var files = fs.readdirSync('src/js');
 
     var output = null;
@@ -514,11 +514,11 @@ var BambeeGulp = (function() {
 
     plugins.livereload.listen();
 
-    watcher.push(gulp.watch(paths.src.scss.main, ['watch:compile:scss:main']));
-    watcher.push(gulp.watch(paths.src.scss.admin, ['watch:compile:scss:admin']));
-    watcher.push(gulp.watch(paths.src.coffee.main, ['compile:js:main']));
-    watcher.push(gulp.watch(paths.src.js.main, ['compile:js:main']));
-    watcher.push(gulp.watch('src/js/vendor*.js.json', ['uglify:js:vendor']));
+    watcher.push(gulp.watch(paths.src.scss.main, ['watch:build:css:main']));
+    watcher.push(gulp.watch(paths.src.scss.admin, ['watch:build:css:admin']));
+    watcher.push(gulp.watch(paths.src.coffee.main, ['build:js:main']));
+    watcher.push(gulp.watch(paths.src.js.main, ['build:js:main']));
+    watcher.push(gulp.watch('src/js/vendor*.js.json', ['build:js:vendor']));
     watcher.push(gulp.watch(paths.src.images, ['watch:images']));
     watcher.push(gulp.watch(paths.src.copy, ['copy', 'reload']));
 
